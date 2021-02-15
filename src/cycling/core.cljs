@@ -1,17 +1,19 @@
 (ns cycling.core
   (:require
-   [reagent.dom :as rdom]))
+   [reagent.dom :as rdom]
+   [cycling.components :as component]))
 
 (enable-console-print!)
 
 (def ^:dynamic *gmap* nil)
-(defn map-load []
-  (let [apiKey (subs (-> js/document .-location .-search) 1)
+
+;; load google maps w/ api key in url
+(defn setup-google-maps []
+  (let [api-key (subs (-> js/document .-location .-search) 1)
         center (clj->js {"lat" 40.730610
                          "lng" -73.935242})
-        loader (google.maps.plugins.loader.Loader. (js-obj
-                                                    "apiKey" apiKey
-                                                    "version" "weekly"))]
+        loader (google.maps.plugins.loader.Loader. (clj->js {"apiKey" api-key
+                                                             "version" "weekly"}))]
 
     (.addEventListener
      js/window
@@ -28,10 +30,18 @@
 (.addEventListener
  js/window
  "load"
- map-load)
+ setup-google-maps)
+
+(defn read-file [e]
+  (let [file (first (-> e .-nativeEvent .-target .-files))]
+    (-> (.text file)
+        (.then #(js/console.log %))
+        (.catch #(js/console.log %)))))
 
 (defn app []
-  [:div "Cycling Data"])
+  [:div
+   [:h1 "Cycling Data"]
+   (component/input-file {:change-event read-file})])
 
 (rdom/render [app]
              (. js/document (getElementById "app")))

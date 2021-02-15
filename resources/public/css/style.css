@@ -1,20 +1,23 @@
-html, body {
+html, body, main {
   height: 100%;
   margin: 0;
 }
 
-#map {
-  height: 100%;
-  width: 100%;
-  z-index: 0;
+body {
+  box-sizing: border-box;
+}
+
+main {
+  display: flex;
 }
 
 #app {
   background-color: transparent;
+  padding: 5px;
+  width: 20%;
+}
+
+#map {
   height: 100%;
-  left: 0;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1;
+  width: 80%;
 }
