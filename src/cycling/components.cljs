@@ -1,9 +1,11 @@
-(ns cycling.components)
+(ns cycling.components
+  (:require [cycling.utilities :as utilities]))
 
-;; {}
-;; :change-event: change event handler
-
-(defn input-file [props]
-  [:input {:accept ".gpx"
-           :type "file"
-           :on-change (props :change-event)}])
+(defn file-drop [id]
+  [:div.file-drop {:on-drag-over #(.preventDefault %)
+                   :on-drop utilities/handle-file-drop}
+   [:input {:id id
+            :accept ".gpx"
+            :type "file"
+            :on-change utilities/handle-file-input}]
+   [:label {:for id} "Drop GPX"]])

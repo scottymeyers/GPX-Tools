@@ -1,14 +1,14 @@
 (ns cycling.core
   (:require
    [reagent.dom :as rdom]
-   [cycling.components :as component]
-   [cycling.utilities :as utilities]))
+   [cycling.components :as component]))
 
 (enable-console-print!)
 
 (def ^:dynamic *gmap* nil)
 
-;; supply google maps api key in url
+;; currently we supply google maps API key in url
+;; TODO: eventually ask for this once and store in localStorage
 (defn setup-google-maps []
   (let [api-key (subs (-> js/document .-location .-search) 1)
         center (clj->js {"lat" 40.730610
@@ -32,8 +32,8 @@
 
 (defn app []
   [:div
-   [:h1 "Cycling Data"]
-   (component/input-file {:change-event utilities/read-file})])
+   [:h1 "GPX Route Visualizer"]
+   (component/file-drop "gpx-files")])
 
 (rdom/render [app]
              (. js/document (getElementById "app")))
