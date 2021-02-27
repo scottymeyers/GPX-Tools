@@ -9,3 +9,9 @@
             :type "file"
             :on-change utilities/handle-file-input}]
    [:label {:for id} "Drop GPX"]])
+
+(defn error-message
+  [error]
+  [:div
+   [:p error]
+   [:button {:on-click (js/console.log "Clear Message")}]])

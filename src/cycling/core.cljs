@@ -1,11 +1,14 @@
 (ns cycling.core
   (:require
+   [reagent.core :as r]
    [reagent.dom :as rdom]
-   [cycling.components :as component]))
+   [cycling.components :as component]
+   [cycling.utilities :as utilities]))
 
 (enable-console-print!)
 
-(def ^:dynamic *gmap* nil)
+(defonce error (r/atom nil))
+(defonce gmap (r/atom nil))
 
 ;; currently we supply google maps API key in url
 ;; TODO: eventually ask for this once and store in localStorage
@@ -21,18 +24,17 @@
      "DOMContentLoaded"
      (-> (.load loader)
          (.then (fn []
-                  (set! *gmap* (google.maps.Map.
-                                (. js/document (getElementById "map"))
-                                (js-obj
-                                 "center" center
-                                 "zoom" 8)))))
-         (.catch (fn [e] (js/console.log e)))))))
+                  (set! gmap (google.maps.Map.
+                              (. js/document (getElementById "map"))
+                              (js-obj
+                               "center" center
+                               "zoom" 8)))))
+         (.catch #(utilities/handle-error "Unable to load Google Maps"))))))
 
 (.addEventListener js/window "load" setup-google-maps)
 
 (defn app []
   [:div
-   [:h1 "GPX Route Visualizer"]
    (component/file-drop "gpx-files")])
 
 (rdom/render [app]
