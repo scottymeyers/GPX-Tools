@@ -22,8 +22,6 @@
         trkpts (. (first trkseg) getElementsByTagName "trkpt")]
     trkpts))
 
-;; TODO: allow multiple files
-;; TODO: clear input value after its processed
 (defn handle-file-input
   "Parses the File Input event"
   [e]
@@ -48,7 +46,6 @@
           (.catch #(set-error "Error processing file")))
       (set-error "File format not supported"))))
 
-;; TODO: Revisit when working on timing tool
 ;;   {:lat (. trkpt getAttribute "lat")
 ;;    :lng (. trkpt getAttribute "lon")
 ;;    :el (.-textContent (first (. trkpt getElementsByTagName "ele")))

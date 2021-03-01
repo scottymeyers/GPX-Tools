@@ -10,8 +10,6 @@
 (defonce app-state (r/atom {:error nil}))
 (defonce gmap (r/atom nil))
 
-;; currently we supply google maps API key in url
-;; TODO: eventually ask for this once and store in localStorage
 (defn setup-google-maps []
   (let [api-key (subs (-> js/document .-location .-search) 1)
         center (clj->js {"lat" 40.730610
@@ -39,7 +37,6 @@
   [:div
    (component/file-drop "gpx-files")
    (component/error-message (:error @app-state))])
-
 
 (rdom/render [app]
              (. js/document (getElementById "app")))
