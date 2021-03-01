@@ -2,17 +2,12 @@
   (:require
    [cycling.core :as core :refer [gmap]]))
 
-(defn parse-trkpt
+(defn convert-trkpt-to-lat-lng
   "Extracts Latitude & Longitude trkpt attributes"
   [trkpt]
   (js/google.maps.LatLng.
    (. trkpt getAttribute "lat")
    (. trkpt getAttribute "lon")))
-
-(defn clear-map
-  "Clears all shapes"
-  []
-  (js/console.log "Clear the Map" gmap))
 
 (defn set-map-boundary
   "Sets the Boundaries"
@@ -23,9 +18,9 @@
     (.fitBounds gmap bounds)))
 
 (defn draw-polyline
-  "Creates and renders a Polyline"
+  "Draws a Polyline"
   [trkpts]
-  (let [path (map #(parse-trkpt %) trkpts)
+  (let [path (map #(convert-trkpt-to-lat-lng %) trkpts)
         polygon (js/google.maps.Polyline.
                  (clj->js {:path path
                            :geodesic true
@@ -36,9 +31,9 @@
     (.addListener js/google.maps.event polygon "click" #(js/console.log "selected polyline" %))))
 
 (defn draw-marker
-  "Creates and renders a Marker"
+  "Draws a Marker"
   [trkpt]
-  (let [position (parse-trkpt trkpt)]
+  (let [position (convert-trkpt-to-lat-lng trkpt)]
     (js/google.maps.Marker. (clj->js {:position position
                                       :map gmap}))
     (set-map-boundary position)))

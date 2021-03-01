@@ -1,5 +1,13 @@
 (ns cycling.components
-  (:require [cycling.utilities :as utilities]))
+  (:require
+   [cycling.utilities :as utilities]))
+
+(defn error-message
+  "Displays @app-state :error"
+  [error]
+  (when error [:div {:class "error"
+                     :on-click #(utilities/set-error nil)}
+               [:p error]]))
 
 (defn file-drop [id]
   [:div.file-drop {:on-drag-over #(.preventDefault %)
@@ -7,11 +15,6 @@
    [:input {:id id
             :accept ".gpx"
             :type "file"
+            :multiple true
             :on-change utilities/handle-file-input}]
    [:label {:for id} "Drop GPX"]])
-
-(defn error-message
-  [error]
-  [:div
-   [:p error]
-   [:button {:on-click (js/console.log "Clear Message")}]])

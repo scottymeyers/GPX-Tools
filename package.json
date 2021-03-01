@@ -1,4 +1,13 @@
 {
+  "author": {
+    "name": "Scott Meyers",
+    "email": "scottmey@gmail.com",
+    "url": "http://www.scott-meyers.com"
+  },
+  "description": "Tools for managing and visualizing GPX Files",
+  "repository": {
+    "url": "https://github.com/scottymeyers/CyclingData"
+  },
   "devDependencies": {
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"

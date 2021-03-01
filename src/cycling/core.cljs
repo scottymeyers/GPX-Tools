@@ -7,7 +7,7 @@
 
 (enable-console-print!)
 
-(defonce error (r/atom nil))
+(defonce app-state (r/atom {:error nil}))
 (defonce gmap (r/atom nil))
 
 ;; currently we supply google maps API key in url
@@ -16,8 +16,9 @@
   (let [api-key (subs (-> js/document .-location .-search) 1)
         center (clj->js {"lat" 40.730610
                          "lng" -73.935242})
-        loader (google.maps.plugins.loader.Loader. (clj->js {"apiKey" api-key
-                                                             "version" "weekly"}))]
+        loader (google.maps.plugins.loader.Loader.
+                (clj->js {"apiKey" api-key
+                          "version" "weekly"}))]
 
     (.addEventListener
      js/window
@@ -29,13 +30,16 @@
                               (js-obj
                                "center" center
                                "zoom" 8)))))
-         (.catch #(utilities/handle-error "Unable to load Google Maps"))))))
+         (.catch #(utilities/set-error
+                   "Unable to load Google Maps"))))))
 
 (.addEventListener js/window "load" setup-google-maps)
 
 (defn app []
   [:div
-   (component/file-drop "gpx-files")])
+   (component/file-drop "gpx-files")
+   (component/error-message (:error @app-state))])
+
 
 (rdom/render [app]
              (. js/document (getElementById "app")))

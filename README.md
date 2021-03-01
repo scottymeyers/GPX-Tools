@@ -1,6 +1,6 @@
-# Cycling
+# GPX Tools
 
-Documents Cycling Activities
+Tools for managing and visualizing GPX Files
 
 ## Setup
 

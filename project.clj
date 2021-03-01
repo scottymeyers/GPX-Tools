@@ -1,6 +1,6 @@
 (defproject cycling "0.1.0-SNAPSHOT"
-  :description "FIXME: write this!"
-  :url "http://example.com/FIXME"
+  :description "Tools for managing and visualizing GPX Files"
+  :url "https://github.com/scottymeyers/CyclingData"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
