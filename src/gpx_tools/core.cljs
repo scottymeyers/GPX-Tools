@@ -1,10 +1,10 @@
-(ns cycling.core
+(ns gpx-tools.core
   (:require
    [reagent.core :as r]
    [reagent.dom :as rdom]
-   [cycling.components :as component]
-   [cycling.map :as cycmap]
-   [cycling.utilities :as utilities]))
+   [gpx-tools.components :as component]
+   [gpx-tools.map :as maptools]
+   [gpx-tools.utilities :as utilities]))
 
 (enable-console-print!)
 
@@ -40,7 +40,7 @@
    (component/file-uploader "gpx-files" #(swap! app-state assoc :activities %))
    (component/error-message (:error @app-state))
    (for [activity (:activities @app-state)]
-     (cycmap/polyline activity gmap))])
+     (maptools/polyline activity gmap))])
 
 (rdom/render [app]
              (. js/document (getElementById "app")))

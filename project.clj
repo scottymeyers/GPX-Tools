@@ -1,6 +1,6 @@
-(defproject cycling "0.1.0-SNAPSHOT"
+(defproject gpx-tools "0.1.0-SNAPSHOT"
   :description "Tools for managing and visualizing GPX Files"
-  :url "https://github.com/scottymeyers/CyclingData"
+  :url "https://github.com/scottymeyers/GPX-Tools"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
@@ -23,14 +23,14 @@
                 ;; The presence of a :figwheel configuration here
                 ;; will cause figwheel to inject the figwheel client
                 ;; into your build
-                :figwheel {:on-jsload "cycling.core/on-js-reload"
+                :figwheel {:on-jsload "gpx-tools.core/on-js-reload"
                            ;; :open-urls will pop open your application
                            ;; in the default browser once Figwheel has
                            ;; started and compiled your application.
                            ;; Comment this out once it no longer serves you.
                            :open-urls ["http://localhost:3449/index.html"]}
 
-                :compiler {:main cycling.core
+                :compiler {:main gpx-tools.core
                            :target :bundle
                            :asset-path "js/compiled/out"
                            :output-to "resources/public/js/compiled/out/index.js"
@@ -46,8 +46,8 @@
                ;; lein cljsbuild once min
                {:id "min"
                 :source-paths ["src"]
-                :compiler {:output-to "resources/public/js/compiled/cycling.js"
-                           :main cycling.core
+                :compiler {:output-to "resources/public/js/compiled/gpx-tools.js"
+                           :main gpx-tools.core
                            :optimizations :advanced
                            :pretty-print false}}]}
 

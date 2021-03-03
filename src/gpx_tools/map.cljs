@@ -1,6 +1,6 @@
-(ns cycling.map
+(ns gpx-tools.map
   (:require
-   [cycling.utilities :as utilities]))
+   [gpx-tools.utilities :as utilities]))
 
 (defn convert-trkpt-to-lat-lng
   "Extracts Latitude & Longitude trkpt attributes"

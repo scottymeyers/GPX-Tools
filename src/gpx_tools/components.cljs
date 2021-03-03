@@ -1,6 +1,6 @@
-(ns cycling.components
+(ns gpx-tools.components
   (:require
-   [cycling.utilities :as utilities]))
+   [gpx-tools.utilities :as utilities]))
 
 (defn error-message
   "Displays @app-state :error"

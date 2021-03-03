@@ -1,5 +1,4 @@
-(ns cycling.utilities
-  (:require [cycling.core :as core :refer [app-state]]))
+(ns gpx-tools.utilities)
 
 (defn dom-parse
   "Extracts the data from GPX file"
@@ -11,7 +10,8 @@
 (defn set-error
   "Displays an Error"
   [error]
-  (reset! app-state {:error error}))
+  (js/console.log error))
+  ;; (reset! app-state {:error error})
 
 (defn get-activity-name
   "Extracts the name from the supplied GPX"
