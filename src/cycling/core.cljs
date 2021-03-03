@@ -3,12 +3,13 @@
    [reagent.core :as r]
    [reagent.dom :as rdom]
    [cycling.components :as component]
+   [cycling.map :as cycmap]
    [cycling.utilities :as utilities]))
 
 (enable-console-print!)
 
 (defonce app-state (r/atom {:error nil
-                            :rides []}))
+                            :activities []}))
 (defonce gmap (r/atom nil))
 
 (defn setup-google-maps []
@@ -36,9 +37,10 @@
 
 (defn app []
   [:div
-  ;;  TODO: add handler for updating @app-state :rides
-   (component/file-uploader "gpx-files" #(js/console.log %))
-   (component/error-message (:error @app-state))])
+   (component/file-uploader "gpx-files" #(swap! app-state assoc :activities %))
+   (component/error-message (:error @app-state))
+   (for [activity (:activities @app-state)]
+     (cycmap/polyline activity gmap))])
 
 (rdom/render [app]
              (. js/document (getElementById "app")))

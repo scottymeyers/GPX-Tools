@@ -1,6 +1,5 @@
 (ns cycling.utilities
-  (:require [goog.string :as gstring]
-            [cycling.core :as core :refer [app-state]]))
+  (:require [cycling.core :as core :refer [app-state]]))
 
 (defn dom-parse
   "Extracts the data from GPX file"
@@ -10,26 +9,32 @@
       (.-firstChild)))
 
 (defn set-error
-  "Sets error in @app-state"
+  "Displays an Error"
   [error]
   (reset! app-state {:error error}))
 
-(defn get-trkpts
-  "Extracts the trkpts from a GPX file"
+(defn get-activity-name
+  "Extracts the name from the supplied GPX"
+  [gpx]
+  (let [trk (. gpx getElementsByTagName "trk")
+        name (.-innerHTML (first (. (first trk) getElementsByTagName "name")))]
+    name))
+
+(defn get-activity-trkpts
+  "Extracts the trkpts from the supplied GPX"
   [gpx]
   (let [trkseg (. gpx getElementsByTagName "trkseg")
         trkpts (. (first trkseg) getElementsByTagName "trkpt")]
     trkpts))
 
 (defn extract-gpx-from-files
-  "Parses the GPX files & returns a Promise"
+  "Parses the GPX files & returns the parsed GPX"
   [files handler]
   (-> (js/Promise.all (map (fn [file]
                              (-> (.then (.text file))
                                  (.then #(dom-parse %))
                                  (.catch #(set-error "Cannot proccess file"))))
                            files))
-      ;; TODO: figure out best way to store gpx in @app-state
       (.then #(handler %))))
 
 (defn handle-file-input
@@ -45,6 +50,7 @@
   (.stopPropagation e)
   (.preventDefault e)
   ;; TODO: filter out non GPX files
+  ;; [goog.string :as gstring]
   ;; (if (or (= (.-type file) "gpx") (gstring/endsWith (.-name file) ".gpx")))
   ;; (set-error "File format not supported")
   (let [files (.-files (.-dataTransfer e))]
