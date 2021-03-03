@@ -26,25 +26,26 @@
   "Parses the File Input event"
   [e]
   (.preventDefault e)
-  (let [file (first (-> e .-nativeEvent .-target .-files))]
-    (if file
-      (-> (.text file)
-          (.then #(draw-polyline (get-trkpts (dom-parse %))))
-          (.catch #(set-error "Cannot process file")))
-      (set-error "No File Selected"))))
+  (let [files (-> e .-nativeEvent .-target .-files)]
+    (doseq [file files]
+      (if file
+        (-> (.text file)
+            (.then #(draw-polyline (get-trkpts (dom-parse %))))
+            (.catch #(set-error "Cannot process file")))
+        (set-error "No File Selected")))))
 
 (defn handle-file-drop
   "Parses the File Drop event"
   [e]
   (.stopPropagation e)
   (.preventDefault e)
-  (let [file (first (.-files (.-dataTransfer e)))]
-    ;; .gpx filetype returned as empty string?
-    (if (or (= (.-type file) "gpx") (gstring/endsWith (.-name file) ".gpx"))
-      (-> (.text file)
-          (.then #(draw-polyline (get-trkpts (dom-parse %))))
-          (.catch #(set-error "Error processing file")))
-      (set-error "File format not supported"))))
+  (let [files (.-files (.-dataTransfer e))]
+    (doseq [file files]
+      (if (or (= (.-type file) "gpx") (gstring/endsWith (.-name file) ".gpx"))
+        (-> (.text file)
+            (.then #(draw-polyline (get-trkpts (dom-parse %))))
+            (.catch #(set-error "Error processing file")))
+        (set-error "File format not supported")))))
 
 ;;   {:lat (. trkpt getAttribute "lat")
 ;;    :lng (. trkpt getAttribute "lon")
