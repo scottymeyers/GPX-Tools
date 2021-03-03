@@ -7,7 +7,8 @@
 
 (enable-console-print!)
 
-(defonce app-state (r/atom {:error nil}))
+(defonce app-state (r/atom {:error nil
+                            :rides []}))
 (defonce gmap (r/atom nil))
 
 (defn setup-google-maps []
@@ -35,7 +36,8 @@
 
 (defn app []
   [:div
-   (component/file-drop "gpx-files")
+  ;;  TODO: add handler for updating @app-state :rides
+   (component/file-uploader "gpx-files" #(js/console.log %))
    (component/error-message (:error @app-state))])
 
 (rdom/render [app]

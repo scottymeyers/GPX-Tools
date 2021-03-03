@@ -9,12 +9,17 @@
                      :on-click #(utilities/set-error nil)}
                [:p error]]))
 
-(defn file-drop [id]
+;; TODO: enforce only GPX files from within this componenent?
+(defn file-uploader
+  "Allows files to be selected or dropped"
+  [id handler]
   [:div.file-drop {:on-drag-over #(.preventDefault %)
-                   :on-drop utilities/handle-file-drop}
+                   :on-drop (fn [e]
+                              (utilities/handle-file-drop e handler))}
    [:input {:id id
             :accept ".gpx"
             :type "file"
             :multiple true
-            :on-change utilities/handle-file-input}]
+            :on-change (fn [e]
+                         (utilities/handle-file-input e handler))}]
    [:label {:for id} "Drop GPX"]])
