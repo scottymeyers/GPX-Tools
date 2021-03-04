@@ -2,8 +2,8 @@
   (:require
    [gpx-tools.utilities :as utilities]))
 
-(defn convert-trkpt-to-lat-lng
-  "Extracts Latitude & Longitude trkpt attributes"
+(defn lat-lng
+  "Creates Google LatLng from a trkpt"
   [trkpt]
   (js/google.maps.LatLng.
    (. trkpt getAttribute "lat")
@@ -19,9 +19,9 @@
     (.fitBounds gmap bounds)))
 
 (defn polyline
-  "Draws a Polyline on the Map"
+  "Draws a Polyline"
   [activity gmap]
-  (let [path (map convert-trkpt-to-lat-lng (utilities/get-activity-trkpts activity))
+  (let [path (map lat-lng (utilities/get-activity-trkpts activity))
         name (utilities/get-activity-name activity)
         polygon (js/google.maps.Polyline.
                  (clj->js {:path path
@@ -34,9 +34,9 @@
     nil))
 
 (defn marker
-  "Draws a Marker on the Map"
+  "Draws a Marker"
   [activity gmap]
-  (let [position (convert-trkpt-to-lat-lng (utilities/get-activity-trkpts activity))]
+  (let [position (lat-lng (utilities/get-activity-trkpts activity))]
     (js/google.maps.Marker. (clj->js {:position position
                                       :map gmap}))))
 
