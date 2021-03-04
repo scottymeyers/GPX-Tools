@@ -9,15 +9,20 @@
                      :on-click #(set-error nil)}
                [:p error]]))
 
-;; TODO: enforce only GPX files from within this componenent?
 (defn file-importer
-  "Allows files to be selected or dropped"
-  [id handler error-handler]
-  [:div.file-drop {:on-drag-over #(.preventDefault %)
-                   :on-drop #(utilities/handle-file-drop % handler error-handler)}
-   [:input {:id id
-            :accept ".gpx"
-            :type "file"
-            :multiple true
-            :on-change #(utilities/handle-file-input % handler error-handler)}]
-   [:label {:for id} "Drop GPX"]])
+  "Selects files via input or dropped"
+  [id send-response]
+  (let [handle-files (fn [files]
+                       (let [valid-files (filter
+                                          (fn [file]
+                                            (utilities/is-gpx-file? file)) files)]
+                         (send-response (utilities/extract-gpx-from-files valid-files))))]
+    (fn []
+      [:div.file-drop {:on-drag-over #(.preventDefault %)
+                       :on-drop #(handle-files (utilities/get-drop-files %))}
+       [:input {:id id
+                :accept ".gpx"
+                :type "file"
+                :multiple true
+                :on-change #(handle-files (utilities/get-input-files %))}]
+       [:label {:for id} "Drop GPX"]])))

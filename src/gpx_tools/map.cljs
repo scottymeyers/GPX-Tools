@@ -39,5 +39,3 @@
   (let [position (lat-lng (utilities/get-activity-trkpts activity))]
     (js/google.maps.Marker. (clj->js {:position position
                                       :map gmap}))))
-
-;; (set-map-boundary position)

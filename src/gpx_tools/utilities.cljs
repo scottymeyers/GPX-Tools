@@ -1,19 +1,27 @@
-(ns gpx-tools.utilities)
+(ns gpx-tools.utilities
+  (:require
+   [goog.string :as gstring]))
 
 (defn dom-parse
-  "Extracts the data from GPX file"
+  "Extracts data from a GPX file"
   [xml]
   (-> (js/DOMParser.)
       (.parseFromString xml "text/xml")
       (.-firstChild)))
 
-;; TODO: confirm that "trk" and "name" exist
 (defn get-activity-name
   "Extracts the name from the supplied GPX"
   [gpx]
   (let [trk (. gpx getElementsByTagName "trk")
         name (.-innerHTML (first (. (first trk) getElementsByTagName "name")))]
     name))
+
+(defn get-activity-time
+  "Extracts the time from the supplied GPX"
+  [gpx]
+  (let [metadata (. gpx getElementsByTagName "metadata")
+        time (.-innerHTML (first (. (first metadata) getElementsByTagName "time")))]
+    time))
 
 (defn get-activity-trkpts
   "Extracts the trkpts from the supplied GPX"
@@ -24,29 +32,28 @@
 
 (defn extract-gpx-from-files
   "Parses the GPX files & returns the parsed GPX"
-  [files handler error-handler]
+  [files]
   (-> (js/Promise.all (map (fn [file]
                              (-> (.then (.text file))
                                  (.then #(dom-parse %))
-                                 (.catch #(error-handler "Cannot proccess file"))))
-                           files))
-      (.then #(handler %))))
-
-(defn handle-file-input
+                                 (.catch #(js/console.log "Cannot proccess file"))))
+                           files))))
+(defn get-input-files
   "Extracts files from the File Input event"
-  [e handler error-handler]
+  [e]
   (.preventDefault e)
   (let [files (-> e .-nativeEvent .-target .-files)]
-    (extract-gpx-from-files files handler error-handler)))
+    files))
 
-(defn handle-file-drop
+(defn get-drop-files
   "Extracts files from the File Drop event"
-  [e handler error-handler]
+  [e]
   (.stopPropagation e)
   (.preventDefault e)
-  ;; TODO: filter out non GPX files
-  ;; [goog.string :as gstring]
-  ;; (if (or (= (.-type file) "gpx") (gstring/endsWith (.-name file) ".gpx")))
-  ;; (set-error "File format not supported")
   (let [files (.-files (.-dataTransfer e))]
-    (extract-gpx-from-files files handler error-handler)))
+    files))
+
+(defn is-gpx-file?
+  "Checks if the file type is GPX"
+  [file]
+  (or (= (.-type file) "gpx") (gstring/endsWith (.-name file) ".gpx")))
