@@ -1,14 +1,20 @@
-(ns cycling.core
+(ns gpx-tools.core
   (:require
    [reagent.core :as r]
    [reagent.dom :as rdom]
-   [cycling.components :as component]
-   [cycling.utilities :as utilities]))
+   [gpx-tools.components :as component]
+   [gpx-tools.map :as maptools]))
 
 (enable-console-print!)
 
-(defonce app-state (r/atom {:error nil}))
+(defonce app-state (r/atom {:error nil
+                            :activities []}))
 (defonce gmap (r/atom nil))
+
+(defn set-error
+  "Displays an Error"
+  [error]
+  (reset! app-state {:error error}))
 
 (defn setup-google-maps []
   (let [api-key (subs (-> js/document .-location .-search) 1)
@@ -28,17 +34,19 @@
                               (js-obj
                                "center" center
                                "zoom" 8)))))
-         (.catch #(utilities/set-error
-                   "Unable to load Google Maps"))))))
+         (.catch #(set-error "Unable to load Google Maps"))))))
 
 (.addEventListener js/window "load" setup-google-maps)
 
 (defn app []
   [:div
-   (component/file-drop "gpx-files")
-   (component/error-message (:error @app-state))])
+   (component/file-importer
+    "gpx"
+    #(swap! app-state assoc :activities %)
+    #(set-error %))
+   (component/error-message (:error @app-state) set-error)
+   (for [activity (:activities @app-state)]
+     (maptools/polyline activity gmap))])
 
 (rdom/render [app]
              (. js/document (getElementById "app")))
-
-(defn on-js-reload [])

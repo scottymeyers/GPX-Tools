@@ -1,39 +1,43 @@
-(ns cycling.map
+(ns gpx-tools.map
   (:require
-   [cycling.core :as core :refer [gmap]]))
+   [gpx-tools.utilities :as utilities]))
 
-(defn convert-trkpt-to-lat-lng
-  "Extracts Latitude & Longitude trkpt attributes"
+(defn lat-lng
+  "Creates Google LatLng from a trkpt"
   [trkpt]
   (js/google.maps.LatLng.
    (. trkpt getAttribute "lat")
    (. trkpt getAttribute "lon")))
 
+;; TODO: Extend boundary based on all activities
 (defn set-map-boundary
   "Sets the Boundaries"
-  [latLngs]
+  [latLngs gmap]
   (let [bounds (js/google.maps.LatLngBounds.)]
     (doseq [latLng latLngs]
       (.extend bounds latLng))
     (.fitBounds gmap bounds)))
 
-(defn draw-polyline
+(defn polyline
   "Draws a Polyline"
-  [trkpts]
-  (let [path (map #(convert-trkpt-to-lat-lng %) trkpts)
+  [activity gmap]
+  (let [path (map lat-lng (utilities/get-activity-trkpts activity))
+        name (utilities/get-activity-name activity)
         polygon (js/google.maps.Polyline.
                  (clj->js {:path path
                            :geodesic true
                            :strokeColor "FF0000"
                            :strokeWeight 3
                            :map gmap}))]
-    (set-map-boundary path)
-    (.addListener js/google.maps.event polygon "click" #(js/console.log "selected polyline" %))))
+    (set-map-boundary path gmap)
+    (.addListener js/google.maps.event polygon "click" #(js/console.log "selected" name))
+    nil))
 
-(defn draw-marker
+(defn marker
   "Draws a Marker"
-  [trkpt]
-  (let [position (convert-trkpt-to-lat-lng trkpt)]
+  [activity gmap]
+  (let [position (lat-lng (utilities/get-activity-trkpts activity))]
     (js/google.maps.Marker. (clj->js {:position position
-                                      :map gmap}))
-    (set-map-boundary position)))
+                                      :map gmap}))))
+
+;; (set-map-boundary position)

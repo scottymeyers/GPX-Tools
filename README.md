@@ -1,6 +1,6 @@
-# GPX Tools
+# GPX Utilities
 
-Tools for managing and visualizing GPX Files
+Tools for analyzing and visualizing GPX Files
 
 ## Setup
 
