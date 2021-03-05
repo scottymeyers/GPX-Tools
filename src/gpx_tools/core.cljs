@@ -19,19 +19,28 @@
   (reset! app-state {:error error}))
 
 (defn select-activity [activity]
+  (if (and (:selected-activity @app-state)
+           (identical?
+            (utilities/get-activity-time (:selected-activity @app-state))
+            (utilities/get-activity-time activity)))
+    (swap! app-state assoc :selected-activity nil)
+    (swap! app-state assoc :selected-activity activity)))
+
+(defn is-selected? [activity]
   (if (:selected-activity @app-state)
-    (if (identical?
-         (utilities/get-activity-time (:selected-activity @app-state)) (utilities/get-activity-time activity))
-      (reset! app-state {:selected-activity nil})
-      (reset! app-state {:selected-activity activity}))
-    (reset! app-state {:selected-activity activity})))
+    (identical?
+     (utilities/get-activity-time
+      (:selected-activity @app-state))
+     (utilities/get-activity-time activity))
+    false)
+  false)
 
 (defn render-activities
   "Accepts a Promise and then associates activities in @app-state"
   [result]
   (.then result #(swap! app-state assoc :activities %)))
 
-;; TODO: try to create a Map component
+;; TODO: create a Map component
 (defn setup-google-maps []
   (let [api-key (subs (-> js/document .-location .-search) 1)
         center (clj->js {"lat" 40.730610
@@ -58,23 +67,22 @@
    [component/file-importer
     "gpx"
     render-activities]
+
+  ;; TODO: create map from :selected-activity GPX
+   (when (:selected-activity @app-state)
+     [:section
+      [:h2 (utilities/get-activity-name (:selected-activity @app-state))]
+      [:small (utilities/get-activity-time (:selected-activity @app-state))]])
+
    [component/error-message (:error @app-state) set-error]
 
-   (if (some? (:selected-activity @app-state))
-     [maptools/polyline
-      (:selected-activity @app-state)
-      gmap
-      select-activity
-      "red"]
-     nil)
-
+  ;;  TODO: track selected activity and pass is-selected to polyline
    (for [activity (:activities @app-state)]
      ^{:key (utilities/get-activity-time activity)}
      [maptools/polyline
       activity
       gmap
-      select-activity
-      "blue"])])
+      select-activity])])
 
 (rdom/render [app]
              (. js/document (getElementById "app")))

@@ -18,8 +18,8 @@
                                             (utilities/is-gpx-file? file)) files)]
                          (send-response (utilities/extract-gpx-from-files valid-files))))]
     (fn []
-      [:div.file-drop {:on-drag-over #(.preventDefault %)
-                       :on-drop #(handle-files (utilities/get-drop-files %))}
+      [:section.file-drop {:on-drag-over #(.preventDefault %)
+                           :on-drop #(handle-files (utilities/get-drop-files %))}
        [:input {:id id
                 :accept ".gpx"
                 :type "file"

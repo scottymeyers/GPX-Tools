@@ -3,6 +3,14 @@ html, body, main {
   margin: 0;
 }
 
+h1 {
+  margin: 0 0 20px;
+}
+
+h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
 body {
   box-sizing: border-box;
 }
@@ -11,8 +19,9 @@ main {
   display: flex;
 }
 
-h1 {
-  margin: 0 0 20px;
+section {
+  background-color: rgba(255, 255, 255, 0.8); 
+  margin-bottom: 10px;
 }
 
 #app {
@@ -31,12 +40,10 @@ h1 {
 }
 
 .file-drop {
-  background-color: rgba(255, 255, 255, 0.8);
   border: 2px dashed currentColor;
   cursor: pointer;
   height: 100px;
   position: relative;
-  width: 100%;
 }
 
 .file-drop input {

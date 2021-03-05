@@ -11,7 +11,7 @@
 
 ;; TODO: Extend boundary based on all activities
 (defn set-map-boundary
-  "Sets the Boundaries"
+  "Sets the Boundaries on the Map"
   [latLngs gmap]
   (let [bounds (js/google.maps.LatLngBounds.)]
     (doseq [latLng latLngs]
@@ -19,26 +19,27 @@
     (.fitBounds gmap bounds)))
 
 (defn polyline
-  "Draws a Polyline"
-  [activity gmap on-select stroke-color]
+  "Creates a Polyline on the Map"
+  [activity gmap on-select]
   (let [path (map lat-lng (utilities/get-activity-trkpts activity))
-        polygon (js/google.maps.Polyline.
-                 (clj->js {:path path
-                           :geodesic true
-                           :strokeColor stroke-color
-                           :strokeWeight 4
-                           :map gmap}))]
+        polyline (js/google.maps.Polyline.
+                  (clj->js {:path path
+                            :geodesic true
+                            :strokeColor "blue"
+                            :strokeWeight 4
+                            :map gmap}))]
     (set-map-boundary path gmap)
     (.addListener
      js/google.maps.event
-     polygon
+     polyline
      "click"
      #(on-select activity))
     nil))
 
 (defn marker
-  "Draws a Marker"
+  "Creates a Marker on the Map"
   [activity gmap]
-  (let [position (lat-lng (utilities/get-activity-trkpts activity))]
-    (js/google.maps.Marker. (clj->js {:position position
-                                      :map gmap}))))
+  (let [position (lat-lng (utilities/get-activity-trkpts activity))
+        _ (js/google.maps.Marker. (clj->js {:position position
+                                            :map gmap}))]
+    nil))
