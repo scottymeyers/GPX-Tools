@@ -9,7 +9,11 @@
    (. trkpt getAttribute "lat")
    (. trkpt getAttribute "lon")))
 
-;; TODO: Extend boundary based on all activities
+(defn is-selected? [selected current]
+  (if selected
+    (if (identical? selected current) true false)
+    false))
+
 (defn set-map-boundary
   "Sets the Boundaries on the Map"
   [latLngs gmap]
@@ -20,14 +24,15 @@
 
 (defn polyline
   "Creates a Polyline on the Map"
-  [activity gmap on-select]
+  [activity gmap on-select selected]
   (let [path (map lat-lng (utilities/get-activity-trkpts activity))
         polyline (js/google.maps.Polyline.
                   (clj->js {:path path
                             :geodesic true
-                            :strokeColor "blue"
-                            :strokeWeight 4
+                            :strokeColor (if (is-selected? selected activity) "blue" "gold")
+                            :strokeWeight 6
                             :map gmap}))]
+    ;; TODO: Extend boundary based on all activities
     (set-map-boundary path gmap)
     (.addListener
      js/google.maps.event

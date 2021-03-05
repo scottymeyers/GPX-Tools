@@ -26,15 +26,6 @@
     (swap! app-state assoc :selected-activity nil)
     (swap! app-state assoc :selected-activity activity)))
 
-(defn is-selected? [activity]
-  (if (:selected-activity @app-state)
-    (identical?
-     (utilities/get-activity-time
-      (:selected-activity @app-state))
-     (utilities/get-activity-time activity))
-    false)
-  false)
-
 (defn render-activities
   "Accepts a Promise and then associates activities in @app-state"
   [result]
@@ -57,7 +48,10 @@
                               (. js/document (getElementById "map"))
                               (js-obj
                                "center" center
-                               "zoom" 8)))))
+                               "zoom" 8
+                               "fullscreenControl" false
+                               "clickableIcons" false
+                               "disableDoubleClickZoom" false)))))
          (.catch #(set-error "Unable to load Google Maps"))))))
 
 (.addEventListener js/window "load" setup-google-maps)
@@ -76,13 +70,14 @@
 
    [component/error-message (:error @app-state) set-error]
 
-  ;;  TODO: track selected activity and pass is-selected to polyline
-   (for [activity (:activities @app-state)]
-     ^{:key (utilities/get-activity-time activity)}
-     [maptools/polyline
-      activity
-      gmap
-      select-activity])])
+   (doall (for [activity (:activities @app-state)]
+            ^{:key (utilities/get-activity-time activity)}
+            [maptools/polyline
+             activity
+             gmap
+             select-activity
+             (:selected-activity @app-state)]))])
+
 
 (rdom/render [app]
              (. js/document (getElementById "app")))
