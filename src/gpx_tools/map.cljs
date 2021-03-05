@@ -20,17 +20,20 @@
 
 (defn polyline
   "Draws a Polyline"
-  [activity gmap]
+  [activity gmap on-select stroke-color]
   (let [path (map lat-lng (utilities/get-activity-trkpts activity))
-        name (utilities/get-activity-name activity)
         polygon (js/google.maps.Polyline.
                  (clj->js {:path path
                            :geodesic true
-                           :strokeColor "FF0000"
-                           :strokeWeight 3
+                           :strokeColor stroke-color
+                           :strokeWeight 4
                            :map gmap}))]
     (set-map-boundary path gmap)
-    (.addListener js/google.maps.event polygon "click" #(js/console.log "selected" name))
+    (.addListener
+     js/google.maps.event
+     polygon
+     "click"
+     #(on-select activity))
     nil))
 
 (defn marker
