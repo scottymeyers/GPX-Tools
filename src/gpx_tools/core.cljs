@@ -29,7 +29,6 @@
       (let [path (map maptools/lat-lng (util/get-activity-trkpts activity))]
         (maptools/set-map-boundary path gmap)))))
 
-
 (defn render-activities
   "Accepts a Promise and then associates activities in @app-state"
   [result]
@@ -41,8 +40,8 @@
         center (clj->js {"lat" 40.730610
                          "lng" -73.935242})
         loader (google.maps.plugins.loader.Loader.
-                (clj->js {"apiKey" api-key
-                          "version" "weekly"}))]
+                (clj->js {:apiKey api-key
+                          :version "weekly"}))]
     (.addEventListener
      js/window
      "DOMContentLoaded"
@@ -55,7 +54,7 @@
                                 :zoom 8
                                 :fullscreenControl false
                                 :clickableIcons false
-                                :disableDoubleClickZoom false})))))
+                                :disableDoubleClickZoom true})))))
          (.catch #(set-error "Unable to load Google Maps"))))))
 (.addEventListener js/window "load" setup-google-maps)
 
@@ -64,14 +63,8 @@
     [:div
      [component/error-message (:error @app-state) set-error]
      [component/file-importer "gpx" render-activities]
-     ;; TODO: create map from :selected-activity GPX
-     (if (:selected-activity @app-state)
-       [:section
-        [:h2 (util/get-activity-name (:selected-activity @app-state))]
-        ;; TODO: return a friendlier date function
-        [:small (util/get-activity-time (:selected-activity @app-state))]]
-       [:section
-        [:h2 "Select an Activity"]])
+     [component/selected-activity (:selected-activity @app-state)]
+
      (doall (for [activity (:activities @app-state)]
               ^{:key (util/get-activity-time activity)}
               [maptools/activity

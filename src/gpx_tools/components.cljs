@@ -1,6 +1,6 @@
 (ns gpx-tools.components
-  (:require [gpx-tools.files :as files]))
-
+  (:require [gpx-tools.files :as files]
+            [gpx-tools.utilities :as util]))
 (defn error-message
   "Displays @app-state :error"
   [error set-error]
@@ -25,3 +25,15 @@
                 :multiple true
                 :on-change #(handle-files (files/get-input-files %))}]
        [:label {:for id} "Drop GPX"]])))
+
+(defn selected-activity
+  "Displays the Selected Activity data"
+  [activity]
+  [:section
+   (if activity
+     [:div
+      [:h2 (util/get-activity-name activity)]
+      ;; TODO: return a friendlier date funct
+      [:small (util/get-activity-time activity)]]
+     [:h2 "Select an Activity"])])
+
