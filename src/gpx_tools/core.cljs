@@ -29,8 +29,9 @@
 (defn render-activities
   "Accepts a Promise and then associates activities in @app-state"
   [result]
-  (.then result #(swap! app-state assoc :activities %)))
+  (.then result #(swap! app-state assoc-in [:activities] %)))
 
+;; (swap! order update :toppings conj "Pepperoni")
 ;; TODO: create a Map component
 (defn setup-google-maps []
   (let [api-key (subs (-> js/document .-location .-search) 1)
@@ -72,12 +73,11 @@
 
    (doall (for [activity (:activities @app-state)]
             ^{:key (utilities/get-activity-time activity)}
-            [maptools/polyline
+            [maptools/activity
              activity
              gmap
              select-activity
              (:selected-activity @app-state)]))])
-
 
 (rdom/render [app]
              (. js/document (getElementById "app")))

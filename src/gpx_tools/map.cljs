@@ -24,22 +24,27 @@
 
 (defn polyline
   "Creates a Polyline on the Map"
-  [activity gmap on-select selected]
-  (let [path (map lat-lng (utilities/get-activity-trkpts activity))
-        polyline (js/google.maps.Polyline.
+  [path gmap handler is-selected]
+  (let [polyline (js/google.maps.Polyline.
                   (clj->js {:path path
                             :geodesic true
-                            :strokeColor (if (is-selected? selected activity) "blue" "gold")
+                            :strokeColor (if is-selected "blue" "gold")
                             :strokeWeight 6
                             :map gmap}))]
-    ;; TODO: Extend boundary based on all activities
-    (set-map-boundary path gmap)
     (.addListener
      js/google.maps.event
      polyline
      "click"
-     #(on-select activity))
+     handler)
     nil))
+
+(defn activity [activity gmap on-select selected]
+  (let [path (map lat-lng (utilities/get-activity-trkpts activity))
+        handler #(on-select activity)
+        is-selected (is-selected? selected activity)]
+    ;; TODO: Extend boundary based on all activities
+    (set-map-boundary path gmap)
+    [polyline path gmap handler is-selected]))
 
 (defn marker
   "Creates a Marker on the Map"
