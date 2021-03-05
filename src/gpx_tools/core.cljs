@@ -64,19 +64,16 @@
      (if (:selected-activity @app-state)
        [:section
         [:h2 (utilities/get-activity-name (:selected-activity @app-state))]
+        ;; TODO: return a friendlier date function
         [:small (utilities/get-activity-time (:selected-activity @app-state))]]
        [:section
         [:h2 "Select an Activity"]])
-
-
-
      (doall (for [activity (:activities @app-state)]
               ^{:key (utilities/get-activity-time activity)}
               [maptools/activity
                activity
                gmap
-               select-activity
-               (:selected-activity @app-state)]))]))
+               select-activity]))]))
 
 (rdom/render [app]
              (. js/document (getElementById "app")))

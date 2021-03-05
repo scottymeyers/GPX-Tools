@@ -9,7 +9,9 @@
    (. trkpt getAttribute "lat")
    (. trkpt getAttribute "lon")))
 
-(defn is-selected? [selected current]
+(defn is-selected?
+  "Determines if the referenced activity is the selected one"
+  [selected current]
   (if selected
     (if (identical? selected current) true false)
     false))
@@ -24,11 +26,11 @@
 
 (defn polyline
   "Creates a Polyline on the Map"
-  [path gmap handler is-selected]
+  [path gmap handler]
   (let [polyline (js/google.maps.Polyline.
                   (clj->js {:path path
                             :geodesic true
-                            :strokeColor (if is-selected "blue" "gold")
+                            :strokeColor "blue"
                             :strokeWeight 6
                             :map gmap}))]
     (.addListener
@@ -38,13 +40,12 @@
      handler)
     nil))
 
-(defn activity [activity gmap on-select selected]
+(defn activity [activity gmap on-select]
   (let [path (map lat-lng (utilities/get-activity-trkpts activity))
-        handler #(on-select activity)
-        is-selected (is-selected? selected activity)]
+        handler #(on-select activity)]
     ;; TODO: Extend boundary based on all activities
     (set-map-boundary path gmap)
-    [polyline path gmap handler is-selected]))
+    [polyline path gmap handler]))
 
 (defn marker
   "Creates a Marker on the Map"
