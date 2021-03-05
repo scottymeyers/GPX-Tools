@@ -1,13 +1,4 @@
-(ns gpx-tools.utilities
-  (:require
-   [goog.string :as gstring]))
-
-(defn dom-parse
-  "Extracts data from a GPX file"
-  [xml]
-  (-> (js/DOMParser.)
-      (.parseFromString xml "text/xml")
-      (.-firstChild)))
+(ns gpx-tools.utilities)
 
 (defn get-activity-name
   "Extracts the name from the supplied GPX"
@@ -29,33 +20,3 @@
   (let [trkseg (. gpx getElementsByTagName "trkseg")
         trkpts (. (first trkseg) getElementsByTagName "trkpt")]
     trkpts))
-
-(defn extract-gpx-from-files
-  "Parses the GPX files & returns the parsed GPX"
-  [files]
-  (-> (js/Promise.all (map (fn [file]
-                             (-> (.then (.text file))
-                                 (.then #(dom-parse %))
-                                 (.catch #(js/console.log "Cannot proccess file"))))
-                           files))))
-
-(defn get-input-files
-  "Extracts all files from the File Input event"
-  [e]
-  (.preventDefault e)
-  (let [files (-> e .-nativeEvent .-target .-files)]
-    files))
-
-(defn get-drop-files
-  "Extracts all files from the File Drop event"
-  [e]
-  (.stopPropagation e)
-  (.preventDefault e)
-  (let [files (.-files (.-dataTransfer e))]
-    files))
-
-(defn is-gpx-file?
-  "Confirms whether or not the file type is GPX"
-  [file]
-  (or (= (.-type file) "gpx")
-      (gstring/endsWith (.-name file) ".gpx")))
