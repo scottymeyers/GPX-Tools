@@ -38,15 +38,16 @@
                                  (.then #(dom-parse %))
                                  (.catch #(js/console.log "Cannot proccess file"))))
                            files))))
+
 (defn get-input-files
-  "Extracts files from the File Input event"
+  "Extracts all files from the File Input event"
   [e]
   (.preventDefault e)
   (let [files (-> e .-nativeEvent .-target .-files)]
     files))
 
 (defn get-drop-files
-  "Extracts files from the File Drop event"
+  "Extracts all files from the File Drop event"
   [e]
   (.stopPropagation e)
   (.preventDefault e)
@@ -54,6 +55,7 @@
     files))
 
 (defn is-gpx-file?
-  "Checks if the file type is GPX"
+  "Confirms whether or not the file type is GPX"
   [file]
-  (or (= (.-type file) "gpx") (gstring/endsWith (.-name file) ".gpx")))
+  (or (= (.-type file) "gpx")
+      (gstring/endsWith (.-name file) ".gpx")))

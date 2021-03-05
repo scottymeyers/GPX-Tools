@@ -9,9 +9,15 @@
    (. trkpt getAttribute "lat")
    (. trkpt getAttribute "lon")))
 
-;; TODO: Extend boundary based on all activities
+(defn is-selected?
+  "Determines if the referenced activity is the selected one"
+  [selected current]
+  (if selected
+    (if (identical? selected current) true false)
+    false))
+
 (defn set-map-boundary
-  "Sets the Boundaries"
+  "Sets the Boundaries on the Map"
   [latLngs gmap]
   (let [bounds (js/google.maps.LatLngBounds.)]
     (doseq [latLng latLngs]
@@ -19,23 +25,32 @@
     (.fitBounds gmap bounds)))
 
 (defn polyline
-  "Draws a Polyline"
-  [activity gmap]
-  (let [path (map lat-lng (utilities/get-activity-trkpts activity))
-        name (utilities/get-activity-name activity)
-        polygon (js/google.maps.Polyline.
-                 (clj->js {:path path
-                           :geodesic true
-                           :strokeColor "FF0000"
-                           :strokeWeight 3
-                           :map gmap}))]
-    (set-map-boundary path gmap)
-    (.addListener js/google.maps.event polygon "click" #(js/console.log "selected" name))
+  "Creates a Polyline on the Map"
+  [path gmap handler]
+  (let [polyline (js/google.maps.Polyline.
+                  (clj->js {:path path
+                            :geodesic true
+                            :strokeColor "blue"
+                            :strokeWeight 6
+                            :map gmap}))]
+    (.addListener
+     js/google.maps.event
+     polyline
+     "click"
+     handler)
     nil))
 
+(defn activity [activity gmap on-select]
+  (let [path (map lat-lng (utilities/get-activity-trkpts activity))
+        handler #(on-select activity)]
+    ;; TODO: Extend boundary based on all activities
+    (set-map-boundary path gmap)
+    [polyline path gmap handler]))
+
 (defn marker
-  "Draws a Marker"
+  "Creates a Marker on the Map"
   [activity gmap]
-  (let [position (lat-lng (utilities/get-activity-trkpts activity))]
-    (js/google.maps.Marker. (clj->js {:position position
-                                      :map gmap}))))
+  (let [position (lat-lng (utilities/get-activity-trkpts activity))
+        _ (js/google.maps.Marker. (clj->js {:position position
+                                            :map gmap}))]
+    nil))
