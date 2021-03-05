@@ -31,7 +31,6 @@
   [result]
   (.then result #(swap! app-state assoc-in [:activities] %)))
 
-;; (swap! order update :toppings conj "Pepperoni")
 ;; TODO: create a Map component
 (defn setup-google-maps []
   (let [api-key (subs (-> js/document .-location .-search) 1)
@@ -47,40 +46,40 @@
          (.then (fn []
                   (set! gmap (google.maps.Map.
                               (. js/document (getElementById "map"))
-                              (js-obj
-                               "center" center
-                               "zoom" 8
-                               "fullscreenControl" false
-                               "clickableIcons" false
-                               "disableDoubleClickZoom" false)))))
+                              (clj->js
+                               {:center center
+                                :zoom 8
+                                :fullscreenControl false
+                                :clickableIcons false
+                                :disableDoubleClickZoom false})))))
          (.catch #(set-error "Unable to load Google Maps"))))))
-
 (.addEventListener js/window "load" setup-google-maps)
 
 (defn app []
-  [:div
-   [component/file-importer
-    "gpx"
-    render-activities]
+  (fn []
+    [:div
+     [component/error-message (:error @app-state) set-error]
+     [component/file-importer "gpx" render-activities]
+     ;; TODO: create map from :selected-activity GPX
+     (if (:selected-activity @app-state)
+       [:section
+        [:h2 (utilities/get-activity-name (:selected-activity @app-state))]
+        [:small (utilities/get-activity-time (:selected-activity @app-state))]]
+       [:section
+        [:h2 "Select an Activity"]])
 
-  ;; TODO: create map from :selected-activity GPX
-   (when (:selected-activity @app-state)
-     [:section
-      [:h2 (utilities/get-activity-name (:selected-activity @app-state))]
-      [:small (utilities/get-activity-time (:selected-activity @app-state))]])
 
-   [component/error-message (:error @app-state) set-error]
 
-   (doall (for [activity (:activities @app-state)]
-            ^{:key (utilities/get-activity-time activity)}
-            [maptools/activity
-             activity
-             gmap
-             select-activity
-             (:selected-activity @app-state)]))])
+     (doall (for [activity (:activities @app-state)]
+              ^{:key (utilities/get-activity-time activity)}
+              [maptools/activity
+               activity
+               gmap
+               select-activity
+               (:selected-activity @app-state)]))]))
 
 (rdom/render [app]
              (. js/document (getElementById "app")))
 
 ;; TODO: adjust boundaries based on all activities
-;; (set-map-boundary position)
+;; (maptools/set-map-boundary position)
