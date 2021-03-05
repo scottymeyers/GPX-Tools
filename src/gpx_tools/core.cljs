@@ -4,7 +4,7 @@
    [reagent.dom :as rdom]
    [gpx-tools.components :as component]
    [gpx-tools.map :as maptools]
-   [gpx-tools.utilities :as utilities]))
+   [gpx-tools.utilities :as util]))
 
 (enable-console-print!)
 
@@ -21,10 +21,14 @@
 (defn select-activity [activity]
   (if (and (:selected-activity @app-state)
            (identical?
-            (utilities/get-activity-time (:selected-activity @app-state))
-            (utilities/get-activity-time activity)))
+            (util/get-activity-time (:selected-activity @app-state))
+            (util/get-activity-time activity)))
     (swap! app-state assoc :selected-activity nil)
-    (swap! app-state assoc :selected-activity activity)))
+    (do
+      (swap! app-state assoc :selected-activity activity)
+      (let [path (map maptools/lat-lng (util/get-activity-trkpts activity))]
+        (maptools/set-map-boundary path gmap)))))
+
 
 (defn render-activities
   "Accepts a Promise and then associates activities in @app-state"
@@ -63,13 +67,13 @@
      ;; TODO: create map from :selected-activity GPX
      (if (:selected-activity @app-state)
        [:section
-        [:h2 (utilities/get-activity-name (:selected-activity @app-state))]
+        [:h2 (util/get-activity-name (:selected-activity @app-state))]
         ;; TODO: return a friendlier date function
-        [:small (utilities/get-activity-time (:selected-activity @app-state))]]
+        [:small (util/get-activity-time (:selected-activity @app-state))]]
        [:section
         [:h2 "Select an Activity"]])
      (doall (for [activity (:activities @app-state)]
-              ^{:key (utilities/get-activity-time activity)}
+              ^{:key (util/get-activity-time activity)}
               [maptools/activity
                activity
                gmap

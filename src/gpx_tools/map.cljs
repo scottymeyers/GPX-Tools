@@ -1,6 +1,6 @@
 (ns gpx-tools.map
   (:require
-   [gpx-tools.utilities :as utilities]))
+   [gpx-tools.utilities :as util]))
 
 (defn lat-lng
   "Creates Google LatLng from a trkpt"
@@ -41,7 +41,7 @@
     nil))
 
 (defn activity [activity gmap on-select]
-  (let [path (map lat-lng (utilities/get-activity-trkpts activity))
+  (let [path (map lat-lng (util/get-activity-trkpts activity))
         handler #(on-select activity)]
     ;; TODO: Extend boundary based on all activities
     (set-map-boundary path gmap)
@@ -50,7 +50,7 @@
 (defn marker
   "Creates a Marker on the Map"
   [activity gmap]
-  (let [position (lat-lng (utilities/get-activity-trkpts activity))
+  (let [position (lat-lng (util/get-activity-trkpts activity))
         _ (js/google.maps.Marker. (clj->js {:position position
                                             :map gmap}))]
     nil))
