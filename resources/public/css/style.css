@@ -34,19 +34,23 @@ section {
   margin-bottom: 10px;
 }
 
-#app {
+#map {
+  height: 100%;
+  left: 0;
+  position: fixed !important;
+  top: 0;
+  width: 100%;
+  z-index: 0;
+}
+
+#content {
   background-color: transparent;
   padding: 10px;
   left: 0;
   position: fixed;
-  top: 0;
+  top: 50px;
   width: 20%;
   z-index: 10;
-}
-
-#map {
-  height: 100%;
-  width: 100%;
 }
 
 .file-drop {
