@@ -24,6 +24,7 @@
 (defn friendly-date
   "Returns the date string for a Date"
   [date] (.toDateString (js/Date. date)))
+
 (defn friendly-time
   "Returns the time string for a Date"
   [date] (.toTimeString (js/Date. date)))

@@ -15,6 +15,12 @@ small {
   display: block;
 }
 
+button {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+}
+
 body {
   box-sizing: border-box;
 }
@@ -84,4 +90,15 @@ section {
 
 .error p {
   margin: 0;
+}
+
+.activities-list button {
+  appearance: none;
+  background-color: transparent;
+  border: 1px solid;
+  cursor: pointer;
+  display: block;
+  padding: 5px;
+  text-align: left;
+  width: 100%;
 }

@@ -26,15 +26,32 @@
                 :on-change #(handle-files (files/get-input-files %))}]
        [:label {:for id} "Drop GPX"]])))
 
-(defn selected-activity
-  "Displays the Selected Activity data"
-  [activity]
-  [:section
-   (if activity
-     [:div
-      [:h2 (util/get-activity-name activity)]
-      ;; TODO: return a friendlier date funct
-      [:small (util/friendly-date (util/get-activity-time activity))]
-      [:small (util/friendly-time (util/get-activity-time activity))]]
-     [:h2 "Select an Activity"])])
+(defn is-selected?
+  "Determines if the referenced activity is the selected one"
+  [selected current]
+  (if selected
+    (if (identical? selected current) true false)
+    false))
 
+(defn activity-list-item
+  "Displays the Selected Activity data"
+  []
+  (fn [activity selected-activity on-select]
+    [:div
+     [:button
+      {:type "button"
+       :style (if (is-selected? selected-activity activity)
+                {:background "black"
+                 :color "white"}
+                {:background "none"})
+       :on-click #(on-select activity)}
+      [:h2 (util/get-activity-name activity)]
+      [:small (util/friendly-date (util/get-activity-time activity))]
+      [:small (util/friendly-time (util/get-activity-time activity))]]]))
+
+(defn activities-list [activities selected-activity on-select]
+  [:section
+   {:class "activities-list"}
+   (doall (for [activity activities]
+            ^{:key (util/get-activity-time activity)}
+            [activity-list-item activity selected-activity on-select]))])
