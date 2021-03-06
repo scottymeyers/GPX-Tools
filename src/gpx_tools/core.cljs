@@ -64,7 +64,6 @@
      [component/error-message (:error @app-state) set-error]
      [component/file-importer "gpx" render-activities]
      [component/selected-activity (:selected-activity @app-state)]
-
      (doall (for [activity (:activities @app-state)]
               ^{:key (util/get-activity-time activity)}
               [maptools/activity

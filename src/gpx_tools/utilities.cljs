@@ -20,3 +20,10 @@
   (let [trkseg (. gpx getElementsByTagName "trkseg")
         trkpts (. (first trkseg) getElementsByTagName "trkpt")]
     trkpts))
+
+(defn friendly-date
+  "Returns the date string for a Date"
+  [date] (.toDateString (js/Date. date)))
+(defn friendly-time
+  "Returns the time string for a Date"
+  [date] (.toTimeString (js/Date. date)))

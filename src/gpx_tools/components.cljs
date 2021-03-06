@@ -34,6 +34,7 @@
      [:div
       [:h2 (util/get-activity-name activity)]
       ;; TODO: return a friendlier date funct
-      [:small (util/get-activity-time activity)]]
+      [:small (util/friendly-date (util/get-activity-time activity))]
+      [:small (util/friendly-time (util/get-activity-time activity))]]
      [:h2 "Select an Activity"])])
 
