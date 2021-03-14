@@ -26,7 +26,7 @@
     (swap! app-state assoc :selected-activity nil)
     (do
       (swap! app-state assoc :selected-activity activity)
-      (let [path (map maptools/lat-lng (util/get-activity-trkpts activity))]
+      (let [path (map util/lat-lng (util/get-activity-trkpts activity))]
         (maptools/set-map-boundary path (:gmap @app-state))))))
 
 (defn store-activities

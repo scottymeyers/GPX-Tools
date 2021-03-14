@@ -1,5 +1,12 @@
 (ns gpx-tools.utilities)
 
+(defn lat-lng
+  "Creates Google LatLng from a trkpt"
+  [trkpt]
+  (js/google.maps.LatLng.
+   (. trkpt getAttribute "lat")
+   (. trkpt getAttribute "lon")))
+
 (defn get-activity-name
   "Extracts the name from the supplied GPX"
   [gpx]
@@ -20,6 +27,11 @@
   (let [trkseg (. gpx getElementsByTagName "trkseg")
         trkpts (. (first trkseg) getElementsByTagName "trkpt")]
     trkpts))
+
+(defn get-activity-points
+  "Extracts the LatLng Points from an Activity"
+  [activity]
+  (map lat-lng (get-activity-trkpts activity)))
 
 (defn friendly-date
   "Returns the date string for a Date"

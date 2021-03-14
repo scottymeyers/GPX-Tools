@@ -2,13 +2,6 @@
   (:require
    [gpx-tools.utilities :as util]))
 
-(defn lat-lng
-  "Creates Google LatLng from a trkpt"
-  [trkpt]
-  (js/google.maps.LatLng.
-   (. trkpt getAttribute "lat")
-   (. trkpt getAttribute "lon")))
-
 (defn set-map-boundary
   "Sets the Boundaries on the Map"
   [latLngs gmap]
@@ -28,16 +21,17 @@
                      :map gmap}))]
     nil))
 
-(defn activity [activity gmap]
-  (let [path (map lat-lng (util/get-activity-trkpts activity))]
-    ;; TODO: Extend boundary based on all activities
-    (set-map-boundary path gmap)
-    [polyline path gmap]))
-
 (defn marker
   "Creates a Marker on the Map"
-  [activity gmap]
-  (let [position (lat-lng (util/get-activity-trkpts activity))
+  [lat-lng gmap]
+  (let [position lat-lng
         _ (js/google.maps.Marker. (clj->js {:position position
                                             :map gmap}))]
     nil))
+
+(defn activity [activity gmap]
+  (let [path (util/get-activity-points activity)]
+    (set-map-boundary path gmap)
+    (marker (first path) gmap)
+    (marker (last path) gmap)
+    [polyline path gmap]))
