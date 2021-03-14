@@ -31,7 +31,8 @@
 
 (defn store-activities
   [activities]
-  (.then activities #(swap! app-state assoc-in [:activities] %)))
+  (.then activities (fn [a]
+                      (apply swap! app-state update-in [:activities] conj a))))
 
 (defn app []
   (fn []
@@ -44,6 +45,7 @@
        (:activities @app-state)
        (:selected-activity @app-state)
        select-activity]
+
       (doall (for [activity (:activities @app-state)]
                ^{:key (util/get-activity-time activity)}
                [maptools/activity
@@ -52,6 +54,3 @@
 
 (rdom/render [app]
              (. js/document (getElementById "app")))
-
-;; TODO: adjust boundaries based on all activities
-;; (maptools/set-map-boundary position)

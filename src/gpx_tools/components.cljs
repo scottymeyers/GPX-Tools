@@ -1,6 +1,7 @@
 (ns gpx-tools.components
   (:require [gpx-tools.files :as files]
             [gpx-tools.utilities :as util]))
+
 (defn error-message
   "Displays @app-state :error"
   [error set-error]
@@ -56,7 +57,6 @@
             ^{:key (util/get-activity-time activity)}
             [activity-list-item activity selected-activity on-select]))])
 
-;; TODO: better not to pass the entire app-state
 (defn google-map [app-state set-error]
   (let [api-key (subs (-> js/document .-location .-search) 1)
         center (clj->js {"lat" 40.730610
