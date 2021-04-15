@@ -1,5 +1,6 @@
 (ns gpx-tools.map
   (:require
+   [reagent.core :as r]
    [gpx-tools.utilities :as util]))
 
 (defn set-map-boundary
@@ -13,13 +14,26 @@
 (defn polyline
   "Creates a Polyline on the Map"
   [path gmap]
-  (let [_ (js/google.maps.Polyline.
+  (let [ref (r/atom nil)]
+    (fn [_ _ is-selected]
+      ; if the polyline hasn't been created, create it
+      (when (nil? @ref)
+        (reset! ref (js/google.maps.Polyline.
            (clj->js {:path path
                      :geodesic true
-                     :strokeColor "blue"
+                     :strokeColor "black"
                      :strokeWeight 6
-                     :map gmap}))]
-    nil))
+                     :map gmap})))
+      )
+      ; if the polyline has been created and toggled
+      ; set the appropriate strokeColor
+      (when (some? @ref)
+        (if (and is-selected (some? @ref))
+          (.setOptions @ref (clj->js {:strokeColor "blue"}))
+          (.setOptions @ref(clj->js {:strokeColor "black"})))
+        )
+      nil
+      )))
 
 (defn marker
   "Creates a Marker on the Map"
@@ -29,9 +43,9 @@
                                             :map gmap}))]
     nil))
 
-(defn activity [activity gmap]
+(defn activity [activity gmap selected]
   (let [path (util/get-activity-points activity)]
     (set-map-boundary path gmap)
     (marker (first path) gmap)
     (marker (last path) gmap)
-    [polyline path gmap]))
+    [polyline path gmap selected]))

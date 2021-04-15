@@ -50,7 +50,9 @@
                ^{:key (util/get-activity-time activity)}
                [maptools/activity
                 activity
-                (:gmap @app-state)]))]]))
+                (:gmap @app-state)
+                (component/is-selected? (:selected-activity @app-state) activity)
+                ]))]]))
 
 (rdom/render [app]
              (. js/document (getElementById "app")))
