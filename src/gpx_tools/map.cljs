@@ -43,9 +43,10 @@
                                             :map gmap}))]
     nil))
 
-(defn activity [activity gmap selected]
+(defn activity
+  "Responsible for rendering an Activity on the Map"
+  [activity gmap selected]
   (let [path (util/get-activity-points activity)]
-    (set-map-boundary path gmap)
     (marker (first path) gmap)
     (marker (last path) gmap)
     [polyline path gmap selected]))

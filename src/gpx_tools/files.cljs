@@ -3,14 +3,14 @@
    [goog.string :as gstring]))
 
 (defn get-input-files
-  "Extracts all files from the File Input event"
+  "Extracts files from the File Input"
   [e]
   (.preventDefault e)
   (let [files (-> e .-nativeEvent .-target .-files)]
     files))
 
 (defn get-drop-files
-  "Extracts all files from the File Drop event"
+  "Extracts files from the File Drop"
   [e]
   (.stopPropagation e)
   (.preventDefault e)

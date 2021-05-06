@@ -18,7 +18,9 @@
   [error]
   (reset! app-state {:error error}))
 
-(defn select-activity [activity]
+(defn select-activity
+  "Sets the Selected Activity"
+  [activity]
   (if (and (:selected-activity @app-state)
            (identical?
             (util/get-activity-time (:selected-activity @app-state))
@@ -30,6 +32,7 @@
         (maptools/set-map-boundary path (:gmap @app-state))))))
 
 (defn store-activities
+  "Adds uploaded Activities to the Store"
   [activities]
   (.then activities (fn [a]
                       (apply swap! app-state update-in [:activities] conj a))))
