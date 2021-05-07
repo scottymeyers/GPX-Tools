@@ -49,27 +49,3 @@
    (doall (for [activity activities]
             ^{:key (util/get-activity-time activity)}
             [activity-list-item activity selected-activity on-select]))])
-
-(defn google-map [app-state set-error]
-  (let [api-key (subs (-> js/document .-location .-search) 1)
-        center (clj->js {"lat" 40.730610
-                         "lng" -73.935242})
-        loader (google.maps.plugins.loader.Loader.
-                (clj->js {:apiKey api-key
-                          :version "weekly"}))]
-    (fn []
-      (.addEventListener
-       js/window
-       "DOMContentLoaded"
-       (-> (.load loader)
-           (.then (fn []
-                    (swap! app-state assoc :gmap (google.maps.Map.
-                                                  (. js/document (getElementById "map"))
-                                                  (clj->js
-                                                   {:center center
-                                                    :zoom 8
-                                                    :fullscreenControl false
-                                                    :clickableIcons false
-                                                    :disableDoubleClickZoom true})))))
-           (.catch #(set-error "Unable to load Google Maps"))))
-      [:div {:id "map"}])))

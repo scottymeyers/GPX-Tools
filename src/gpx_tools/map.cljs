@@ -13,7 +13,7 @@
 
 (defn polyline
   "Creates a Polyline on the Map"
-  [path gmap]
+  [path gmap _]
   (let [ref (r/atom nil)]
     (fn [_ _ is-selected]
       ; if the polyline hasn't been created, create it
@@ -21,7 +21,7 @@
         (reset! ref (js/google.maps.Polyline.
            (clj->js {:path path
                      :geodesic true
-                     :strokeColor "black"
+                     :strokeOpacity 0.9
                      :strokeWeight 6
                      :map gmap})))
       )
@@ -29,8 +29,8 @@
       ; set the appropriate strokeColor
       (when (some? @ref)
         (if (and is-selected (some? @ref))
-          (.setOptions @ref (clj->js {:strokeColor "blue"}))
-          (.setOptions @ref (clj->js {:strokeColor "black"})))
+          (.setOptions @ref (clj->js {:strokeColor "blue" }))
+          (.setOptions @ref (clj->js {:strokeColor "black" })))
         )
       nil
       )))
@@ -47,6 +47,6 @@
   "Responsible for rendering an Activity on the Map"
   [activity gmap selected]
   (let [path (util/get-activity-points activity)]
-    (marker (first path) gmap)
-    (marker (last path) gmap)
+    ;; (marker (first path) gmap)
+    ;; (marker (last path) gmap)
     [polyline path gmap selected]))

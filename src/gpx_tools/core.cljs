@@ -35,14 +35,42 @@
   (.then activities (fn [a]
                       (apply swap! app-state update-in [:activities] conj a))))
 
+(defn setup-google-maps
+  "Load Google Maps w/ API Key in URL"
+  []
+  (let [api-key (subs (-> js/document .-location .-search) 1)
+        center (clj->js {:lat 40.730610
+                         :lng -73.935242})
+        loader (google.maps.plugins.loader.Loader. (clj->js {:apiKey api-key
+                                                             :version "weekly"}))]
+
+    (.addEventListener
+     js/window
+     "DOMContentLoaded"
+     (-> (.load loader)
+         (.then (fn []
+                  (swap! app-state assoc :gmap (google.maps.Map.
+                                                  (. js/document (getElementById "map"))
+                                                  (clj->js
+                                                   {:center center
+                                                    :clickableIcons false
+                                                    :disableDoubleClickZoom true
+                                                    :fullscreenControl false
+                                                    :zoom 8})))))
+         (.catch #(set-error "Unable to load Google Maps"))))))
+
+(.addEventListener
+ js/window
+ "load"
+ setup-google-maps)
+
+
 (defn app []
   (fn []
     [:div
-     [component/google-map app-state set-error]
      [:div {:id "content"}
       [component/error-message (:error @app-state) set-error]
       [component/file-importer "gpx" store-activities]
-
       [component/activities-list
        (:activities @app-state)
        (:selected-activity @app-state)
