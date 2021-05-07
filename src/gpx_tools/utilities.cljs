@@ -40,3 +40,10 @@
 (defn friendly-time
   "Returns the time string for a Date"
   [date] (.toTimeString (js/Date. date)))
+
+(defn is-selected?
+  "Determines if the referenced activity is the selected one"
+  [selected current]
+  (if selected
+    (if (identical? selected current) true false)
+    false))

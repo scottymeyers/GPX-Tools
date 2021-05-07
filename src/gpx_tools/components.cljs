@@ -27,13 +27,6 @@
                 :on-change #(handle-files (files/get-input-files %))}]
        [:label {:for id} "Drop GPX"]])))
 
-(defn is-selected?
-  "Determines if the referenced activity is the selected one"
-  [selected current]
-  (if selected
-    (if (identical? selected current) true false)
-    false))
-
 (defn activity-list-item
   "Displays the Selected Activity data"
   []
@@ -41,7 +34,7 @@
     [:div
      [:button
       {:type "button"
-       :style (if (is-selected? selected-activity activity)
+       :style (if (util/is-selected? selected-activity activity)
                 {:background "black"
                  :color "white"}
                 {:background "none"})

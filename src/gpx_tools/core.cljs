@@ -22,9 +22,7 @@
   "Sets the Selected Activity"
   [activity]
   (if (and (:selected-activity @app-state)
-           (identical?
-            (util/get-activity-time (:selected-activity @app-state))
-            (util/get-activity-time activity)))
+           (util/is-selected? (:selected-activity @app-state) activity))
     (swap! app-state assoc :selected-activity nil)
     (do
       (swap! app-state assoc :selected-activity activity)
@@ -44,6 +42,7 @@
      [:div {:id "content"}
       [component/error-message (:error @app-state) set-error]
       [component/file-importer "gpx" store-activities]
+
       [component/activities-list
        (:activities @app-state)
        (:selected-activity @app-state)
@@ -54,7 +53,7 @@
                [maptools/activity
                 activity
                 (:gmap @app-state)
-                (component/is-selected? (:selected-activity @app-state) activity)
+                (util/is-selected? (:selected-activity @app-state) activity)
                 ]))]]))
 
 (rdom/render [app]

@@ -4,7 +4,7 @@
    [gpx-tools.utilities :as util]))
 
 (defn set-map-boundary
-  "Sets the Boundaries on the Map"
+  "Sets the Boundary on the Map"
   [latLngs gmap]
   (let [bounds (js/google.maps.LatLngBounds.)]
     (doseq [latLng latLngs]
@@ -30,7 +30,7 @@
       (when (some? @ref)
         (if (and is-selected (some? @ref))
           (.setOptions @ref (clj->js {:strokeColor "blue"}))
-          (.setOptions @ref(clj->js {:strokeColor "black"})))
+          (.setOptions @ref (clj->js {:strokeColor "black"})))
         )
       nil
       )))
