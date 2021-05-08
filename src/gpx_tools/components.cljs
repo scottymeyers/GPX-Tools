@@ -34,18 +34,18 @@
     [:div
      [:button
       {:type "button"
-       :style (if (util/is-selected? selected-activity activity)
+       :style (if (util/is-selected? selected-activity (.-gpx activity))
                 {:background "black"
                  :color "white"}
                 {:background "none"})
        :on-click #(on-select activity)}
-      [:h2 (util/get-activity-name activity)]
-      [:small (util/friendly-date (util/get-activity-time activity))]
-      [:small (util/friendly-time (util/get-activity-time activity))]]]))
+      [:h2 (util/get-activity-name (.-gpx activity))]
+      [:small (util/friendly-date (util/get-activity-time (.-gpx activity)))]
+      [:small (util/friendly-time (util/get-activity-time (.-gpx activity)))]]]))
 
 (defn activities-list [activities selected-activity on-select]
   [:section
    {:class "activities-list"}
    (doall (for [activity activities]
-            ^{:key (util/get-activity-time activity)}
+            ^{:key (util/get-activity-time (.-gpx activity))}
             [activity-list-item activity selected-activity on-select]))])

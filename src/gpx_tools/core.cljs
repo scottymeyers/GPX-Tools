@@ -12,7 +12,7 @@
                             :gmap nil
                             :activities []
                             :selected-activity nil
-                            :polylines []}))
+                            }))
 
 (defn set-error
   "Stores Errors that should be displayed"
@@ -26,15 +26,15 @@
            (util/is-selected? (:selected-activity @app-state) activity))
     (swap! app-state assoc :selected-activity nil)
     (do
+      (js/console.dir activity)
       (swap! app-state assoc :selected-activity activity)
-      (let [path (map util/lat-lng (util/get-activity-trkpts activity))]
+      (let [path (map util/lat-lng (util/get-activity-trkpts (.-gpx activity)))]
         (maptools/set-map-boundary path (:gmap @app-state))))))
 
 (defn store-activities
   "Adds uploaded Activities to the Store"
   [activities]
   (.then activities (fn [a]                      
-                      (apply swap! app-state update-in [:activities] conj a)
                       (doseq [activity a]
                         (let [polyline (js/google.maps.Polyline.
                                                                             (clj->js {:path (util/get-activity-points activity)
@@ -42,8 +42,10 @@
                                                                                       :strokeOpacity 0.9
                                                                                       :strokeWeight 6
                                                                                       :map (:gmap @app-state)}))]
-                          
-                          (swap! app-state update-in [:polylines] conj polyline))))))
+                          (swap! app-state update-in [:activities] conj (clj->js {
+                                                                                  :gpx activity
+                                                                                  :polyline polyline
+                          })))))))
                           
 
 (defn setup-google-maps
@@ -75,7 +77,6 @@
  "load"
  setup-google-maps)
 
-
 (defn app []
   (fn []
     [:div
@@ -87,7 +88,6 @@
        (:selected-activity @app-state)
        select-activity]
 ]]))
-                
 
 (rdom/render [app]
              (. js/document (getElementById "app")))
