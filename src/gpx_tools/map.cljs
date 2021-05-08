@@ -13,18 +13,10 @@
 
 (defn polyline
   "Creates a Polyline on the Map"
-  [path gmap _]
+  [path gmap _ app-state]
   (let [ref (r/atom nil)]
     (fn [_ _ is-selected]
       ; if the polyline hasn't been created, create it
-      (when (nil? @ref)
-        (reset! ref (js/google.maps.Polyline.
-           (clj->js {:path path
-                     :geodesic true
-                     :strokeOpacity 0.9
-                     :strokeWeight 6
-                     :map gmap})))
-      )
       ; if the polyline has been created and toggled
       ; set the appropriate strokeColor
       (when (some? @ref)
@@ -45,7 +37,7 @@
 
 (defn activity
   "Responsible for rendering an Activity on the Map"
-  [activity gmap selected]
+  [activity gmap selected app-state]
   (let [path (util/get-activity-points activity)]
     ;; (marker (first path) gmap)
     ;; (marker (last path) gmap)

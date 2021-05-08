@@ -11,7 +11,8 @@
 (defonce app-state (r/atom {:error nil
                             :gmap nil
                             :activities []
-                            :selected-activity nil}))
+                            :selected-activity nil
+                            :polylines []}))
 
 (defn set-error
   "Stores Errors that should be displayed"
@@ -32,8 +33,18 @@
 (defn store-activities
   "Adds uploaded Activities to the Store"
   [activities]
-  (.then activities (fn [a]
-                      (apply swap! app-state update-in [:activities] conj a))))
+  (.then activities (fn [a]                      
+                      (apply swap! app-state update-in [:activities] conj a)
+                      (doseq [activity a]
+                        (let [polyline (js/google.maps.Polyline.
+                                                                            (clj->js {:path (util/get-activity-points activity)
+                                                                                      :geodesic true
+                                                                                      :strokeOpacity 0.9
+                                                                                      :strokeWeight 6
+                                                                                      :map (:gmap @app-state)}))]
+                          
+                          (swap! app-state update-in [:polylines] conj polyline))))))
+                          
 
 (defn setup-google-maps
   "Load Google Maps w/ API Key in URL"
@@ -75,14 +86,8 @@
        (:activities @app-state)
        (:selected-activity @app-state)
        select-activity]
-
-      (doall (for [activity (:activities @app-state)]
-               ^{:key (util/get-activity-time activity)}
-               [maptools/activity
-                activity
-                (:gmap @app-state)
-                (util/is-selected? (:selected-activity @app-state) activity)
-                ]))]]))
+]]))
+                
 
 (rdom/render [app]
              (. js/document (getElementById "app")))
