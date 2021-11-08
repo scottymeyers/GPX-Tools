@@ -62,7 +62,7 @@
 (.addEventListener
  js/window
  "load"
- setup-google-maps)
+ (setup-google-maps))
 
 
 (defn app []
